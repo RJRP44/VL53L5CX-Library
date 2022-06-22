@@ -66,6 +66,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "driver/i2c.h"
 
 /**
  * @brief Structure VL53L5CX_Platform needs to be filled by the customer,
@@ -80,7 +81,8 @@ typedef struct
 	/* To be filled with customer's platform. At least an I2C address/descriptor
 	 * needs to be added */
 	/* Example for most standard platform : I2C address of sensor */
-    uint16_t  			address;
+    uint16_t address;
+	i2c_port_t port;
 
 } VL53L5CX_Platform;
 
