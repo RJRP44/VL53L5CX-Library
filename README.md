@@ -14,7 +14,7 @@ on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_co
 
 * [Installation](#installation)
 * [Examples](#examples)
-* [Project Structure](#project structure)
+* [Structure](#structure)
 
 ---
 
@@ -62,7 +62,7 @@ static esp_err_t i2c_master_init(void) {
 ```
 ---
 
-### Project Structure
+### Structure
 
 ```
 ├── CMakeLists.txt
