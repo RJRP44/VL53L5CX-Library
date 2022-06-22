@@ -31,6 +31,8 @@ and unzip inside your project.
 
 ### Examples
 
+ST provide some examples in `/examples`.
+
 This example function is used to initialize the [I2C bus](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/i2c.html) for the sensor :
 
 ```c
