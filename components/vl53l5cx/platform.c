@@ -61,7 +61,7 @@
 *******************************************************************************/
 
 
-#include "platform.h"
+#include "include/platform.h"
 #include "driver/i2c.h"
 #include "FreeRTOSConfig.h"
 

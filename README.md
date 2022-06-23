@@ -20,12 +20,10 @@ on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_co
 
 ### Installation
 
-* Download [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_com/en/products/embedded-software/imaging-software/stsw-img023.html)
-and unzip inside your project.
-
-* Replace the `platform.c` and `inc/platform.h` files with those of the project.
-
-* Finally, import the vl53l5cx api in your project.
+* Download this project.
+* Add the folder /vl53l5cx to your components.
+* Import `vl53v5cx_api.h`.
+* Start your new project 🎉
 
 ---
 
@@ -66,15 +64,15 @@ static esp_err_t i2c_master_init(void) {
 
 ```
 ├── CMakeLists.txt
+├── 📁 components /                
+│   └── 📁 Vl53l5cx /
+│      └── 📁 include /
+│          ├── platform.h
+│          ├── vl53v5cx_api.h
+│          └── vl53v5cx_buffer.h
 ├── 📁 main /
 │   ├── CMakeLists.txt
 │   ├── main.c
-│   ├── platform.c
-│   ├── vl53v5cx.c
-│   └── 📁 inc /
-│       ├── platform.h
-│       ├── vl53v5cx_api.h
-│       └── vl53v5cx_buffer.h
 └── README.md                  
 ```
 
