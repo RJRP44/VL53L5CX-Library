@@ -21,7 +21,7 @@ on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_co
 ### Installation
 
 * Download this project.
-* Add the folder /vl53l5cx to your components.
+* Add the [folder /vl53l5cx](https://github.com/RJRP44/V53L5CX-Library/tree/master/components/vl53l5cx) to your components.
 * Include `"../components/vl53l5cx/include/vl53l5cx_api.h"` in your files.
 * Start your new project 🎉
 
