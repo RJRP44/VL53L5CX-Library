@@ -1,9 +1,9 @@
-<h1 align="center"> Vl53v5cx library for ESP32  </h1>
+<h1 align="center"> Vl53l5cx library for ESP32  </h1>
 <p align="center">
 <img align="center" src="https://seeklogo.com/images/E/espressif-systems-logo-1350B9E771-seeklogo.com.png" alt="espressif logo" width="40">
 </p>
 
-A vl53v5cx library for esp32 using the **esp-idf framework**. This library is based
+A vl53l5cx library for esp32 using the **esp-idf framework**. This library is based
 on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_com/en/products/embedded-software/imaging-software/stsw-img023.html)
 . This library is just an adaptation of the ST's library for esp-32.
 
@@ -25,7 +25,7 @@ and unzip inside your project.
 
 * Replace the `platform.c` and `inc/platform.h` files with those of the project.
 
-* Finally, import the vl53v5cx api in your project.
+* Finally, import the vl53l5cx api in your project.
 
 ---
 
