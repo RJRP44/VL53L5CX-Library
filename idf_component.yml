@@ -1,0 +1,5 @@
+version: "1.1.0"
+description: A vl53l5cx library for esp32 using the esp-idf framework .
+url: https://github.com/RJRP44/V53L5CX-Library
+dependencies:
+  idf: ">=4.1"
