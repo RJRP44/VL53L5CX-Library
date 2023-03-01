@@ -14,16 +14,48 @@ on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_co
 
 * [Installation](#installation)
 * [Examples](#examples)
-* [Structure](#structure)
+* [Structure](#component-structure)
 
 ---
 
-### Installation
+## Installation
+
+### IDF Component Manager
+
+You can now use the [IDF Component Manager](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-component-manager.html) to easily import this library into your project ! If you have not already done so, create a file named `idf_component.yml` in your `📁 ./main` folder. Now just add the library to it :
+```yaml
+dependencies:
+  
+  #V53L5CX-Library
+  vl53l5cx:
+    git: https://github.com/RJRP44/V53L5CX-Library.git
+
+```
+
+You can now reload your cmake project, and you should see it in the cmake log :
+
+```log
+Processing 2 dependencies:
+[1/2] idf (5.0.0)
+[2/2] vl53l5cx
+```
+
+and in the `📁 ./managed_components` folder. 
+
+
+### Manually
 
 * Download this project.
-* Add the [folder /vl53l5cx](https://github.com/RJRP44/V53L5CX-Library/tree/master/components/vl53l5cx) to your components.
-* Include `"../components/vl53l5cx/include/vl53l5cx_api.h"` in your files.
-* Start your new project 🎉
+* Create a `📁 /vl53lcx` folder into the `📁 ./components` folder.
+* Add it the content of this project
+* Reload Cmake
+
+
+
+You can now import the library, and use the full power of the sensor 🎉.
+``` c
+#include "vl53l5cx_api.h" 
+```
 
 ---
 
@@ -60,27 +92,26 @@ static esp_err_t i2c_master_init(void) {
 ```
 ---
 
-### Structure
+### Component Structure 
 
 ```
+├── 📁 include /
+│      ├── platform.h
+│      ├── vl53v5cx_api.h
+│      └── vl53v5cx_buffer.h
 ├── CMakeLists.txt
-├── 📁 components /                
-│   └── 📁 Vl53l5cx /
-│      └── 📁 include /
-│          ├── platform.h
-│          ├── vl53v5cx_api.h
-│          └── vl53v5cx_buffer.h
-├── 📁 main /
-│   ├── CMakeLists.txt
-│   ├── main.c
-└── README.md                  
+├── idf_component.yml
+├── LICENCE
+├── platform.c
+├── README.md
+└── vl53l5cx_api.c              
 ```
 
 ---
 
 ## 📝 License
 
-Copyright © 2022 [RJRP44](https://www.github.com/RJRP44).
+Copyright © 2023 [RJRP44](https://www.github.com/RJRP44).
 
 This project is [BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause/)  licensed.
 
