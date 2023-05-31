@@ -12,6 +12,7 @@
 
 #include "include/platform.h"
 #include "FreeRTOSConfig.h"
+#include "driver/i2c.h"
 
 int _i2c_write(VL53L5CX_Platform *p_platform, uint8_t *buf, uint32_t len) {
 
