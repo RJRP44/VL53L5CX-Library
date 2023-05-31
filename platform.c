@@ -14,6 +14,12 @@
 #include "FreeRTOSConfig.h"
 #include "driver/i2c.h"
 
+#define ACK_CHECK_EN                    0x1
+#define ACK_VAL                         0x0
+#define NACK_VAL                        0x1
+
+uint8_t _i2c_buffer[32769];
+
 int _i2c_write(VL53L5CX_Platform *p_platform, uint8_t *buf, uint32_t len) {
 
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
