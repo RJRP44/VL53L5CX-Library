@@ -1,69 +1,19 @@
-/*******************************************************************************
-* Copyright (c) 2020, STMicroelectronics - All Rights Reserved
-*
-* This file is part of the VL53L5CX Ultra Lite Driver and is dual licensed,
-* either 'STMicroelectronics Proprietary license'
-* or 'BSD 3-clause "New" or "Revised" License' , at your option.
-*
-********************************************************************************
-*
-* 'STMicroelectronics Proprietary license'
-*
-********************************************************************************
-*
-* License terms: STMicroelectronics Proprietary in accordance with licensing
-* terms at www.st.com/sla0081
-*
-* STMicroelectronics confidential
-* Reproduction and Communication of this document is strictly prohibited unless
-* specifically authorized in writing by STMicroelectronics.
-*
-*
-********************************************************************************
-*
-* Alternatively, the VL53L5CX Ultra Lite Driver may be distributed under the
-* terms of 'BSD 3-clause "New" or "Revised" License', in which case the
-* following provisions apply instead of the ones mentioned above :
-*
-********************************************************************************
-*
-* License terms: BSD 3-clause "New" or "Revised" License.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-* 1. Redistributions of source code must retain the above copyright notice, this
-* list of conditions and the following disclaimer.
-*
-* 2. Redistributions in binary form must reproduce the above copyright notice,
-* this list of conditions and the following disclaimer in the documentation
-* and/or other materials provided with the distribution.
-*
-* 3. Neither the name of the copyright holder nor the names of its contributors
-* may be used to endorse or promote products derived from this software
-* without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
-*******************************************************************************/
+/**
+  *
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 #include <stdlib.h>
 #include <string.h>
-#include "include/vl53l5cx_api.h"
-#include "include/vl53l5cx_buffers.h"
+#include "vl53l5cx_api.h"
+#include "vl53l5cx_buffers.h"
 
 /**
  * @brief Inner function, not available outside this file. This function is used
@@ -297,6 +247,7 @@ uint8_t vl53l5cx_init(
 
 	p_dev->default_xtalk = (uint8_t*)VL53L5CX_DEFAULT_XTALK;
 	p_dev->default_configuration = (uint8_t*)VL53L5CX_DEFAULT_CONFIGURATION;
+	p_dev->is_auto_stop_enabled = (uint8_t)0x0;
 
 	/* SW reboot sequence */
 	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
@@ -443,6 +394,13 @@ uint8_t vl53l5cx_init(
 	status |= vl53l5cx_dci_write_data(p_dev, (uint8_t*)&single_range,
 			VL53L5CX_DCI_SINGLE_RANGE,
 			(uint16_t)sizeof(single_range));
+
+	tmp = (uint8_t)1;
+	status |= vl53l5cx_dci_replace_data(p_dev, p_dev->temp_buffer,
+			VL53L5CX_GLARE_FILTER, 40, (uint8_t*)&tmp, 1, 0x26);
+	status |= vl53l5cx_dci_replace_data(p_dev, p_dev->temp_buffer,
+			VL53L5CX_GLARE_FILTER, 40, (uint8_t*)&tmp, 1, 0x25);
+
 exit:
 	return status;
 }
@@ -671,7 +629,8 @@ uint8_t vl53l5cx_stop_ranging(
 
 	status |= RdMulti(&(p_dev->platform),
                           0x2FFC, (uint8_t*)&auto_stop_flag, 4);
-	if(auto_stop_flag != (uint32_t)0x4FF)
+	if((auto_stop_flag != (uint32_t)0x4FF)
+		&& (p_dev->is_auto_stop_enabled == (uint8_t)1))
 	{
 		status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
 
@@ -719,7 +678,7 @@ uint8_t vl53l5cx_check_data_ready(
 		VL53L5CX_Configuration		*p_dev,
 		uint8_t				*p_isReady)
 {
-	uint8_t tmp, status = VL53L5CX_STATUS_OK;
+	uint8_t status = VL53L5CX_STATUS_OK;
 
 	status |= RdMulti(&(p_dev->platform), 0x0, p_dev->temp_buffer, 4);
 
@@ -740,11 +699,6 @@ uint8_t vl53l5cx_check_data_ready(
         	status |= p_dev->temp_buffer[2];	/* Return GO2 error status */
         }
 
-		*p_isReady = 0;
-	}
-
-	status |= RdByte(&(p_dev->platform), 0x6, &tmp);
-	if((tmp & (uint8_t)0x20) != (uint8_t)0x0){
 		*p_isReady = 0;
 	}
 
@@ -906,9 +860,14 @@ uint8_t vl53l5cx_get_ranging_data(
 
 	/* Check if footer id and header id are matching. This allows to detect
 	 * corrupted frames */
-    header_id = *(uint16_t *)(&p_dev->temp_buffer[0x8]);
-    footer_id = *(uint16_t *)(&p_dev->temp_buffer[p_dev->data_read_size
-												  - (uint32_t)4]);
+	header_id = ((uint16_t)(p_dev->temp_buffer[0x8])<<8) & 0xFF00U;
+	header_id |= ((uint16_t)(p_dev->temp_buffer[0x9])) & 0x00FFU;
+
+	footer_id = ((uint16_t)(p_dev->temp_buffer[p_dev->data_read_size
+		- (uint32_t)4]) << 8) & 0xFF00U;
+	footer_id |= ((uint16_t)(p_dev->temp_buffer[p_dev->data_read_size
+		- (uint32_t)3])) & 0xFFU;
+
 	if(header_id != footer_id)
 	{
 		status |= VL53L5CX_STATUS_CORRUPTED_FRAME;
@@ -1188,6 +1147,42 @@ uint8_t vl53l5cx_set_ranging_mode(
 	status |= vl53l5cx_dci_write_data(p_dev, (uint8_t*)&single_range,
 			VL53L5CX_DCI_SINGLE_RANGE, 
                         (uint16_t)sizeof(single_range));
+
+	return status;
+}
+
+uint8_t vl53l5cx_enable_internal_cp(
+		VL53L5CX_Configuration *p_dev)
+{
+	uint8_t status = VL53L5CX_STATUS_OK;
+	uint8_t vcsel_bootup_fsm = 1;
+	uint8_t analog_dynamic_pad_0 = 0;
+
+	status |= vl53l5cx_dci_replace_data(p_dev, p_dev->temp_buffer,
+			VL53L5CX_DCI_INTERNAL_CP, 16,
+			(uint8_t*)&vcsel_bootup_fsm, 1, 0x0A);
+
+	status |= vl53l5cx_dci_replace_data(p_dev, p_dev->temp_buffer,
+			VL53L5CX_DCI_INTERNAL_CP, 16,
+			(uint8_t*)&analog_dynamic_pad_0, 1, 0x0E);
+
+	return status;
+}
+
+uint8_t vl53l5cx_disable_internal_cp(
+		VL53L5CX_Configuration *p_dev)
+{
+	uint8_t status = VL53L5CX_STATUS_OK;
+	uint8_t vcsel_bootup_fsm = 0;
+	uint8_t analog_dynamic_pad_0 = 1;
+
+	status |= vl53l5cx_dci_replace_data(p_dev, p_dev->temp_buffer,
+			VL53L5CX_DCI_INTERNAL_CP, 16,
+			(uint8_t*)&vcsel_bootup_fsm, 1, 0x0A);
+
+	status |= vl53l5cx_dci_replace_data(p_dev, p_dev->temp_buffer,
+			VL53L5CX_DCI_INTERNAL_CP, 16,
+			(uint8_t*)&analog_dynamic_pad_0, 1, 0x0E);
 
 	return status;
 }
