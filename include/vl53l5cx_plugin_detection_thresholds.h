@@ -10,6 +10,10 @@
   ******************************************************************************
   */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef VL53L5CX_PLUGIN_DETECTION_THRESHOLDS_H_
 #define VL53L5CX_PLUGIN_DETECTION_THRESHOLDS_H_
 
@@ -144,3 +148,7 @@ uint8_t vl53l5cx_set_detection_thresholds(
 		VL53L5CX_DetectionThresholds	*p_thresholds);
 
 #endif /* VL53L5CX_PLUGIN_DETECTION_THRESHOLDS_H_ */
+
+#ifdef __cplusplus
+}
+#endif
