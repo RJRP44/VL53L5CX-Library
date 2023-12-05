@@ -28,7 +28,7 @@ dependencies:
   
   #V53L5CX-Library
   vl53l5cx:
-    git: https://github.com/RJRP44/VL53L5CX-Library.git
+    git: https://github.com/falkecarlsen/VL53L5CX-Library.git
 
 ```
 
