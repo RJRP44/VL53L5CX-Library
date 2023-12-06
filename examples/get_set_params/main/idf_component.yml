@@ -1,0 +1,5 @@
+version: "1.0.0"
+description: "VL53L5CX get set params example"
+dependencies:
+  rjrp44/vl53l5cx:
+    version : "~2.0.0"
