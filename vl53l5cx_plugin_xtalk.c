@@ -10,7 +10,7 @@
   ******************************************************************************
   */
 
-#include "include/vl53l5cx_plugin_xtalk.h"
+#include "vl53l5cx_plugin_xtalk.h"
 
 /*
  * Inner function, not available outside this file. This function is used to
@@ -233,6 +233,7 @@ uint8_t vl53l5cx_calibrate_xtalk(
 					(void)memcpy(p_dev->xtalk_data, 
                                                p_dev->default_xtalk,
                                                VL53L5CX_XTALK_BUFFER_SIZE);
+					status |= VL53L5CX_STATUS_XTALK_FAILED;
 				}
 				continue_loop = (uint8_t)0;
 			}

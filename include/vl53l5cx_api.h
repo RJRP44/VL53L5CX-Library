@@ -10,10 +10,6 @@
   ******************************************************************************
   */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef VL53L5CX_API_H_
 #define VL53L5CX_API_H_
 
@@ -29,7 +25,7 @@ extern "C" {
  * @brief Current driver version.
  */
 
-#define VL53L5CX_API_REVISION			"VL53L5CX_1.3.9"
+#define VL53L5CX_API_REVISION			"VL53L5CX_1.3.10"
 
 /**
  * @brief Default I2C address of VL53L5CX sensor. Can be changed using function
@@ -86,6 +82,7 @@ extern "C" {
 #define VL53L5CX_STATUS_TIMEOUT_ERROR		((uint8_t) 1U)
 #define VL53L5CX_STATUS_CORRUPTED_FRAME		((uint8_t) 2U)
 #define VL53L5CX_STATUS_CRC_CSUM_FAILED		((uint8_t) 3U)
+#define VL53L5CX_STATUS_XTALK_FAILED		((uint8_t) 4U)
 #define VL53L5CX_MCU_ERROR			((uint8_t) 66U)
 #define VL53L5CX_STATUS_INVALID_PARAM		((uint8_t) 127U)
 #define VL53L5CX_STATUS_ERROR			((uint8_t) 255U)
@@ -719,7 +716,3 @@ uint8_t vl53l5cx_dci_replace_data(
 		uint16_t			new_data_pos);
 
 #endif //VL53L5CX_API_H_
-
-#ifdef __cplusplus
-}
-#endif

@@ -1,4 +1,4 @@
-version: "2.0.1"
+version: "2.0.2"
 description: "A vl53l5cx library for esp32 using the esp-idf framework."
 url: "https://github.com/RJRP44/VL53L5CX-Library"
 repository: "https://github.com/RJRP44/VL53L5CX-Library"

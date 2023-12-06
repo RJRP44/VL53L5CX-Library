@@ -630,7 +630,7 @@ uint8_t vl53l5cx_stop_ranging(
 	status |= RdMulti(&(p_dev->platform),
                           0x2FFC, (uint8_t*)&auto_stop_flag, 4);
 	if((auto_stop_flag != (uint32_t)0x4FF)
-		&& (p_dev->is_auto_stop_enabled == (uint8_t)1))
+		&& (p_dev->is_auto_stop_enabled == (uint8_t)0))
 	{
 		status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
 

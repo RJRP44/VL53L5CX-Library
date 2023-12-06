@@ -10,7 +10,7 @@
   ******************************************************************************
   */
 
-#include "include/vl53l5cx_plugin_detection_thresholds.h"
+#include "vl53l5cx_plugin_detection_thresholds.h"
 
 uint8_t vl53l5cx_get_detection_thresholds_enable(
 		VL53L5CX_Configuration		*p_dev,
