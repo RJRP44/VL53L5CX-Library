@@ -41,6 +41,8 @@ typedef struct
 
 } VL53L5CX_Platform;
 
+#define VL53L5CX_MAX_CLK_SPEED 1000000
+
 /*
  * @brief The macro below is used to define the number of target per zone sent
  * through I2C. This value can be changed by user, in order to tune I2C
