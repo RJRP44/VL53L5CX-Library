@@ -11,6 +11,10 @@
   */
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef _PLATFORM_H_
 #define _PLATFORM_H_
 #pragma once
@@ -167,3 +171,7 @@ uint8_t WaitMs(
         uint32_t TimeMs);
 
 #endif	// _PLATFORM_H_
+
+#ifdef __cplusplus
+}
+#endif
