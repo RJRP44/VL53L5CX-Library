@@ -23,6 +23,10 @@ extern "C" {
 #include <string.h>
 #include "driver/i2c.h"
 
+#define ACK_CHECK_EN 0x1
+#define ACK_VAL 0x0
+#define NACK_VAL 0x1
+
 /**
  * @brief Structure VL53L5CX_Platform needs to be filled by the customer,
  * depending on his platform. At least, it contains the VL53L5CX I2C address.
