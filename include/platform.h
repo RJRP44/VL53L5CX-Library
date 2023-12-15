@@ -31,6 +31,10 @@ extern "C" {
  * layer.
  */
 
+#define ACK_CHECK_EN 0x1
+#define ACK_VAL 0x0
+#define NACK_VAL 0x1
+
 typedef struct
 {
     /* To be filled with customer's platform. At least an I2C address/descriptor
