@@ -29,7 +29,8 @@ For the examples this is the used wiring, but feel free to modify it and adapt i
 | I2C_RST             | NC                                            |
 | SDA                 | GPIO1, 2.2 kΩ pullup resistor required to 3v3 |
 | SCL                 | GPIO2, 2.2 kΩ pullup resistor required to 3v3 |
-| PWREN               | 3V3                                           |
+| LPn                 | 3V3                                           |
+| PWREN               | NC                                            |
 | AVDD                | 3V3                                           |
 | IOVDD               | 3V3                                           |
 | GND                 | GND                                           |
