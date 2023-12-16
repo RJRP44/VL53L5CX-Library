@@ -44,7 +44,7 @@ So, you can use the [IDF Component Manager](https://docs.espressif.com/projects/
 To add this component to your project, run:
 
 ```log
-idf.py add-dependency "rjrp44/vl53l5cx^2.0.2" 
+idf.py add-dependency "rjrp44/vl53l5cx^2.0.3" 
 ```
 
 
