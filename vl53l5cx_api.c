@@ -1187,6 +1187,32 @@ uint8_t vl53l5cx_disable_internal_cp(
 	return status;
 }
 
+uint8_t vl53l5cx_get_VHV_repeat_count(
+		VL53L5CX_Configuration *p_dev,
+		uint32_t *p_repeat_count)
+{
+	uint8_t status = VL53L5CX_STATUS_OK;
+	status |= vl53l5cx_dci_read_data(p_dev, (uint8_t*)p_dev->temp_buffer,
+			VL53L5CX_DCI_VHV_CONFIG, 16);
+
+	*p_repeat_count = ((uint32_t)p_dev->temp_buffer[7] << 24)
+			| ((uint32_t)p_dev->temp_buffer[6]  << 16)
+			| ((uint32_t)p_dev->temp_buffer[5]  << 8)
+			| (uint32_t)p_dev->temp_buffer[4];
+
+	return status;
+}
+
+uint8_t vl53l5cx_set_VHV_repeat_count(
+		VL53L5CX_Configuration *p_dev,
+		uint32_t repeat_count)
+{
+	uint8_t status = VL53L5CX_STATUS_OK;
+	status |= vl53l5cx_dci_replace_data(p_dev, p_dev->temp_buffer,
+			VL53L5CX_DCI_VHV_CONFIG, 16, (uint8_t*)&repeat_count, 4, 0x4);
+	return status;
+}
+
 uint8_t vl53l5cx_dci_read_data(
 		VL53L5CX_Configuration		*p_dev,
 		uint8_t				*data,
