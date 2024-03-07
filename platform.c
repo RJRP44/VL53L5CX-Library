@@ -87,7 +87,7 @@ uint8_t RdMulti(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t
     i2c_master_read_byte(cmd, p_values + size - 1, NACK_VAL);
 
     i2c_master_stop(cmd);
-    ret = i2c_master_cmd_begin(I2C_NUM_1, cmd, 1000 / portTICK_PERIOD_MS);
+    ret = i2c_master_cmd_begin(p_platform->port, cmd, 1000 / portTICK_PERIOD_MS);
     i2c_cmd_link_delete(cmd);
 
     return ret;
