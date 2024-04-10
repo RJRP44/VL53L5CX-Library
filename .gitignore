@@ -1,0 +1,18 @@
+# Folder view configuration files
+.DS_Store
+Desktop.ini
+._*
+Thumbs.db
+.Spotlight-V100
+.Trashes
+.Trash
+.AppleDouble
+
+# Application specific files
+~$*
+/.idea
+/.vagrant
+*.sublime-workspace
+
+# Project specific files
+build

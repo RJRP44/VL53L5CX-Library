@@ -1,0 +1,13 @@
+menu "vl53l5cx"
+
+config VL53L5CX_NB_TARGET_PER_ZONE
+    int "Number of target per zone"
+    range 1 4
+    default 1
+    help
+        The VL53L5CX can measure up to four targets per zone.
+        The user can configure the number of targets returned by the sensor.
+        The minimum distance between two targets to be detected is 600 mm.
+        A lower number of target per zone means a lower RAM
+
+endmenu
