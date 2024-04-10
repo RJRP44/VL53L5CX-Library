@@ -1,5 +1,9 @@
 # VL53L5CX library for ESP32
 
+[![Component Registry](https://components.espressif.com/components/rjrp44/vl53l5cx/badge.svg)](https://components.espressif.com/components/rjrp44/vl53l5cx)
+[![Uld Version](https://img.shields.io/badge/uld_version-1.3.11-white)](https://www.st.com/content/st_com/en/products/embedded-software/imaging-software/stsw-img023.html)
+
+
 A vl53l5cx library for esp32 using the **esp-idf framework**. This library is based
 on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_com/en/products/embedded-software/imaging-software/stsw-img023.html) v1.3.11
 . This library is just an adaptation of the ST's library for esp-32.
@@ -15,7 +19,7 @@ on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_co
 * [Examples](#examples-)
 * [Usual Errors](#usual-errors-)
     * [Stack overflow error](#stack-overflow-error-)
-
+* [More parameters](#more-parameters-)
 ---
 
 ## Getting started
@@ -61,11 +65,15 @@ If by running an example you get a stack overflow error, this means that your ma
 ```
 **Increase the main stack size :**
 
-Run `idf.py menuconfig`. Go to Component Config -> ESP System settings and increase the Main task stack size to at least `7168`.
+Run `idf.py menuconfig`. Go to Component `Component config -> ESP System settings` and increase the Main task stack size to at least `7168`.
+
+
+## More parameters ⚙
+In order to get more control over your sensor configuration, run `idf.py menuconfig` and go to `Component Config -> Vl53l5cx`.
 
 ## 📝 License
 
-Copyright © 2023 [RJRP](https://www.github.com/RJRP44).
+Copyright © 2024 [RJRP](https://www.github.com/RJRP44).
 
 This project is [BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause/)  licensed.
 

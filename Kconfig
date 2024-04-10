@@ -1,4 +1,4 @@
-menu "vl53l5cx"
+menu "Vl53l5cx"
 
 config VL53L5CX_NB_TARGET_PER_ZONE
     int "Number of target per zone"
