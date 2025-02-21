@@ -13,7 +13,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endifv
+#endif
 
 #ifndef VL53L5CX_BUFFERS_H_
 #define VL53L5CX_BUFFERS_H_

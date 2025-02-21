@@ -14,6 +14,7 @@ on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_co
 ## Contents 📌
 
 * [Getting started](#Getting-started)
+*   * [Requirements](#requirements)
     * [Wiring for the VL53L5CX-SATEL](#wiring-for-the-vl53l5cx-satel- )
     * [Library Installation](#library-installation-)
 * [Examples](#examples-)
@@ -23,6 +24,11 @@ on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_co
 ---
 
 ## Getting started
+
+### Requirements
+
+This version of the library uses the latest version of the esp-idf ([v5.4](https://github.com/espressif/esp-idf/releases/tag/v5.4)) for performance improvements.
+
 ### Wiring for the VL53L5CX-SATEL 🔌
 
 For the examples this is the used wiring, but feel free to modify it and adapt it for your needs.

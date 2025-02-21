@@ -3,4 +3,4 @@ description: "VL53L5CX basic ranging example"
 dependencies:
   vl53l5cx:
     path : ../../..
-    version : "~3.0.0"
+    version : "~4.0.0"

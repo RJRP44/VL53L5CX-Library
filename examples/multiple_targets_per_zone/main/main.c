@@ -77,25 +77,32 @@
 void app_main(void)
 {
 
-    //Define the i2c bus configuration
+//Define the i2c bus configuration
     i2c_port_t i2c_port = I2C_NUM_1;
-    i2c_config_t i2c_config = {
-            .mode = I2C_MODE_MASTER,
-            .sda_io_num = 1,
+    i2c_master_bus_config_t i2c_mst_config = {
+            .clk_source = I2C_CLK_SRC_DEFAULT,
+            .i2c_port = i2c_port,
             .scl_io_num = 2,
-            .sda_pullup_en = GPIO_PULLUP_ENABLE,
-            .scl_pullup_en = GPIO_PULLUP_ENABLE,
-            .master.clk_speed = VL53L5CX_MAX_CLK_SPEED,
+            .sda_io_num = 1,
+            .glitch_ignore_cnt = 7,
+            .flags.enable_internal_pullup = true,
     };
 
-    i2c_param_config(i2c_port, &i2c_config);
-    i2c_driver_install(i2c_port, i2c_config.mode, 0, 0, 0);
+    i2c_master_bus_handle_t bus_handle;
+    ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_mst_config, &bus_handle));
+
+    //Define the i2c device configuration
+    i2c_device_config_t dev_cfg = {
+            .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+            .device_address = VL53L5CX_DEFAULT_I2C_ADDRESS >> 1,
+            .scl_speed_hz = VL53L5CX_MAX_CLK_SPEED,
+    };
 
     /*********************************/
     /*   VL53L5CX ranging variables  */
     /*********************************/
 
-    uint8_t 				status, loop, isAlive, isReady, i, j;
+    uint8_t 				status, loop, isAlive, isReady, i;
     VL53L5CX_Configuration 	Dev;			/* Sensor configuration */
     VL53L5CX_ResultsData 	Results;		/* Results data from VL53L5CX */
 
@@ -104,14 +111,14 @@ void app_main(void)
     /*      Customer platform        */
     /*********************************/
 
-    /* Fill the platform structure with customer's implementation. For this
-    * example, only the I2C address is used.
-    */
-    Dev.platform.address = VL53L5CX_DEFAULT_I2C_ADDRESS;
-    Dev.platform.port = i2c_port;
+    Dev.platform.bus_config = i2c_mst_config;
 
-    /* (Optional) Reset sensor toggling PINs (see platform, not in API) */
-    //Reset_Sensor(&(Dev.platform));
+    //Register the device
+    i2c_master_bus_add_device(bus_handle, &dev_cfg, &Dev.platform.handle);
+
+    /* (Optional) Reset sensor */
+    Dev.platform.reset_gpio = GPIO_NUM_5;
+    VL53L5CX_Reset_Sensor(&(Dev.platform));
 
     /* (Optional) Set a new I2C address if the wanted address is different
     * from the default one (filled with 0x20 for this example).

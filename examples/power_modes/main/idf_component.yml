@@ -2,4 +2,4 @@ version: "1.0.0"
 description: "VL53L5CX power modes example"
 dependencies:
   rjrp44/vl53l5cx:
-    version : "~3.0.0"
+    version : "~4.0.0"

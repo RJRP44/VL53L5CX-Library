@@ -21,15 +21,10 @@ extern "C" {
 
 #include <stdint.h>
 #include <string.h>
-#include "driver/i2c.h"
-
-/**
- * @brief Structure VL53L5CX_Platform needs to be filled by the customer,
- * depending on his platform. At least, it contains the VL53L5CX I2C address.
- * Some additional fields can be added, as descriptors, or platform
- * dependencies. Anything added into this structure is visible into the platform
- * layer.
- */
+#include <driver/i2c_master.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <driver/gpio.h>
 
 #define ACK_CHECK_EN 0x1
 #define ACK_VAL 0x0
@@ -37,11 +32,10 @@ extern "C" {
 
 typedef struct
 {
-    /* To be filled with customer's platform. At least an I2C address/descriptor
-     * needs to be added */
-    /* Example for most standard platform : I2C address of sensor */
-    uint16_t  			address;
-    i2c_port_t port;
+    i2c_master_dev_handle_t handle;
+    i2c_master_bus_config_t bus_config;
+    uint16_t address;
+    gpio_num_t reset_gpio;
 
 } VL53L5CX_Platform;
 
@@ -60,7 +54,6 @@ typedef struct
 #define VL53L5CX_NB_TARGET_PER_ZONE CONFIG_VL53L5CX_NB_TARGET_PER_ZONE
 #endif
 
-
 /*
  * @brief The macro below can be used to avoid data conversion into the driver.
  * By default there is a conversion between firmware and user data. Using this macro
@@ -76,15 +69,41 @@ typedef struct
  * I2C access.
  */
 
-// #define VL53L5CX_DISABLE_AMBIENT_PER_SPAD
-// #define VL53L5CX_DISABLE_NB_SPADS_ENABLED
-// #define VL53L5CX_DISABLE_NB_TARGET_DETECTED
-// #define VL53L5CX_DISABLE_SIGNAL_PER_SPAD
-// #define VL53L5CX_DISABLE_RANGE_SIGMA_MM
-// #define VL53L5CX_DISABLE_DISTANCE_MM
-// #define VL53L5CX_DISABLE_REFLECTANCE_PERCENT
-// #define VL53L5CX_DISABLE_TARGET_STATUS
-// #define VL53L5CX_DISABLE_MOTION_INDICATOR
+#ifdef CONFIG_VL53L5CX_DISABLE_AMBIENT_PER_SPAD
+#define VL53L5CX_DISABLE_AMBIENT_PER_SPAD
+#endif
+
+#ifdef CONFIG_VL53L5CX_DISABLE_NB_SPADS_ENABLED
+#define VL53L5CX_DISABLE_NB_SPADS_ENABLED
+#endif
+
+#ifdef CONFIG_VL53L5CX_DISABLE_NB_TARGET_DETECTED
+#define VL53L5CX_DISABLE_NB_TARGET_DETECTED
+#endif
+
+#ifdef CONFIG_VL53L5CX_DISABLE_SIGNAL_PER_SPAD
+#define VL53L5CX_DISABLE_SIGNAL_PER_SPAD
+#endif
+
+#ifdef CONFIG_VL53L5CX_DISABLE_RANGE_SIGMA_MM
+#define VL53L5CX_DISABLE_RANGE_SIGMA_MM
+#endif
+
+#ifdef CONFIG_VL53L5CX_DISABLE_DISTANCE_MM
+#define VL53L5CX_DISABLE_DISTANCE_MM
+#endif
+
+#ifdef CONFIG_VL53L5CX_DISABLE_REFLECTANCE_PERCENT
+#define VL53L5CX_DISABLE_REFLECTANCE_PERCENT
+#endif
+
+#ifdef CONFIG_VL53L5CX_DISABLE_TARGET_STATUS
+#define VL53L5CX_DISABLE_TARGET_STATUS
+#endif
+
+#ifdef CONFIG_VL53L5CX_DISABLE_MOTION_INDICATOR
+#define VL53L5CX_DISABLE_MOTION_INDICATOR
+#endif
 
 /**
  * @param (VL53L5CX_Platform*) p_platform : Pointer of VL53L5CX platform
