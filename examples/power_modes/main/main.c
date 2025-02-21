@@ -162,7 +162,7 @@ void app_main(void)
 
     /* We wait 5 seconds, only for the example */
     printf("Waiting 5 seconds for the example...\n");
-    WaitMs(&(Dev.platform), 5000);
+    VL53L5CX_WaitMs(&(Dev.platform), 5);
 
     /* After 5 seconds, the sensor needs to be restarted */
     status = vl53l5cx_set_power_mode(&Dev, VL53L5CX_POWER_MODE_WAKEUP);

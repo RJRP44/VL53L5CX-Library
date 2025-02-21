@@ -1,11 +1,11 @@
 # VL53L5CX library for ESP32
 
 [![Component Registry](https://components.espressif.com/components/rjrp44/vl53l5cx/badge.svg)](https://components.espressif.com/components/rjrp44/vl53l5cx)
-[![Uld Version](https://img.shields.io/badge/uld_version-1.3.11-white)](https://www.st.com/content/st_com/en/products/embedded-software/imaging-software/stsw-img023.html)
+[![Uld Version](https://img.shields.io/badge/uld_version-2.0.1-white)](https://www.st.com/content/st_com/en/products/embedded-software/imaging-software/stsw-img023.html)
 
 
 A vl53l5cx library for esp32 using the **esp-idf framework**. This library is based
-on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_com/en/products/embedded-software/imaging-software/stsw-img023.html) v1.3.11
+on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_com/en/products/embedded-software/imaging-software/stsw-img023.html) v2.0.1
 . This library is just an adaptation of the ST's library for esp-32.
 
 > **Warning**

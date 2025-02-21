@@ -32,9 +32,9 @@ static uint8_t _vl53l5cx_poll_for_answer(
 	uint8_t timeout = 0;
 
 	do {
-		status |= RdMulti(&(p_dev->platform), address,
+		status |= VL53L5CX_RdMulti(&(p_dev->platform), address,
 				p_dev->temp_buffer, size);
-		status |= WaitMs(&(p_dev->platform), 10);
+		status |= VL53L5CX_WaitMs(&(p_dev->platform), 10);
 
 		if(timeout >= (uint8_t)200)	/* 2s timeout */
 		{
@@ -66,13 +66,13 @@ static uint8_t _vl53l5cx_poll_for_mcu_boot(
    uint16_t timeout = 0;
 
    do {
-		status |= RdByte(&(p_dev->platform), 0x06, &go2_status0);
+		status |= VL53L5CX_RdByte(&(p_dev->platform), 0x06, &go2_status0);
 		if((go2_status0 & (uint8_t)0x80) != (uint8_t)0){
-			status |= RdByte(&(p_dev->platform), 0x07, &go2_status1);
+			status |= VL53L5CX_RdByte(&(p_dev->platform), 0x07, &go2_status1);
 			status |= go2_status1;
 			break;
 		}
-		(void)WaitMs(&(p_dev->platform), 1);
+		(void)VL53L5CX_WaitMs(&(p_dev->platform), 1);
 		timeout++;
 
 		if((go2_status0 & (uint8_t)0x1) != (uint8_t)0){
@@ -107,7 +107,7 @@ static uint8_t _vl53l5cx_send_offset_data(
 	/* Data extrapolation is required for 4X4 offset */
 	if(resolution == (uint8_t)VL53L5CX_RESOLUTION_4X4){
 		(void)memcpy(&(p_dev->temp_buffer[0x10]), dss_4x4, sizeof(dss_4x4));
-		SwapBuffer(p_dev->temp_buffer, VL53L5CX_OFFSET_BUFFER_SIZE);
+		VL53L5CX_SwapBuffer(p_dev->temp_buffer, VL53L5CX_OFFSET_BUFFER_SIZE);
 		(void)memcpy(signal_grid,&(p_dev->temp_buffer[0x3C]),
 			sizeof(signal_grid));
 		(void)memcpy(range_grid,&(p_dev->temp_buffer[0x140]),
@@ -137,7 +137,7 @@ static uint8_t _vl53l5cx_send_offset_data(
 		signal_grid, sizeof(signal_grid));
             (void)memcpy(&(p_dev->temp_buffer[0x140]),
 		range_grid, sizeof(range_grid));
-            SwapBuffer(p_dev->temp_buffer, VL53L5CX_OFFSET_BUFFER_SIZE);
+            VL53L5CX_SwapBuffer(p_dev->temp_buffer, VL53L5CX_OFFSET_BUFFER_SIZE);
 	}
 
 	for(k = 0; k < (VL53L5CX_OFFSET_BUFFER_SIZE - (uint16_t)4); k++)
@@ -146,7 +146,7 @@ static uint8_t _vl53l5cx_send_offset_data(
 	}
 
 	(void)memcpy(&(p_dev->temp_buffer[0x1E0]), footer, 8);
-	status |= WrMulti(&(p_dev->platform), 0x2e18, p_dev->temp_buffer,
+	status |= VL53L5CX_WrMulti(&(p_dev->platform), 0x2e18, p_dev->temp_buffer,
 		VL53L5CX_OFFSET_BUFFER_SIZE);
 	status |=_vl53l5cx_poll_for_answer(p_dev, 4, 1,
 		VL53L5CX_UI_CMD_STATUS, 0xff, 0x03);
@@ -181,7 +181,7 @@ static uint8_t _vl53l5cx_send_xtalk_data(
 		(void)memcpy(&(p_dev->temp_buffer[0x020]),
 			dss_4x4, sizeof(dss_4x4));
 
-		SwapBuffer(p_dev->temp_buffer, VL53L5CX_XTALK_BUFFER_SIZE);
+		VL53L5CX_SwapBuffer(p_dev->temp_buffer, VL53L5CX_XTALK_BUFFER_SIZE);
 		(void)memcpy(signal_grid, &(p_dev->temp_buffer[0x34]),
 			sizeof(signal_grid));
 
@@ -199,14 +199,14 @@ static uint8_t _vl53l5cx_send_xtalk_data(
 	    (void)memset(&signal_grid[0x10], 0, (uint32_t)192);
 	    (void)memcpy(&(p_dev->temp_buffer[0x34]),
                   signal_grid, sizeof(signal_grid));
-	    SwapBuffer(p_dev->temp_buffer, VL53L5CX_XTALK_BUFFER_SIZE);
+	    VL53L5CX_SwapBuffer(p_dev->temp_buffer, VL53L5CX_XTALK_BUFFER_SIZE);
 	    (void)memcpy(&(p_dev->temp_buffer[0x134]),
 	    profile_4x4, sizeof(profile_4x4));
 	    (void)memset(&(p_dev->temp_buffer[0x078]),0 ,
                          (uint32_t)4*sizeof(uint8_t));
 	}
 
-	status |= WrMulti(&(p_dev->platform), 0x2cf8,
+	status |= VL53L5CX_WrMulti(&(p_dev->platform), 0x2cf8,
 			p_dev->temp_buffer, VL53L5CX_XTALK_BUFFER_SIZE);
 	status |=_vl53l5cx_poll_for_answer(p_dev, 4, 1,
 			VL53L5CX_UI_CMD_STATUS, 0xff, 0x03);
@@ -221,10 +221,10 @@ uint8_t vl53l5cx_is_alive(
 	uint8_t status = VL53L5CX_STATUS_OK;
 	uint8_t device_id, revision_id;
 
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
-	status |= RdByte(&(p_dev->platform), 0, &device_id);
-	status |= RdByte(&(p_dev->platform), 1, &revision_id);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x02);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 0, &device_id);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 1, &revision_id);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x02);
 
 	if((device_id == (uint8_t)0xF0) && (revision_id == (uint8_t)0x02))
 	{
@@ -250,121 +250,121 @@ uint8_t vl53l5cx_init(
 	p_dev->is_auto_stop_enabled = (uint8_t)0x0;
 
 	/* SW reboot sequence */
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x0009, 0x04);
-	status |= WrByte(&(p_dev->platform), 0x000F, 0x40);
-	status |= WrByte(&(p_dev->platform), 0x000A, 0x03);
-	status |= RdByte(&(p_dev->platform), 0x7FFF, &tmp);
-	status |= WrByte(&(p_dev->platform), 0x000C, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0009, 0x04);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x000F, 0x40);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x000A, 0x03);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 0x7FFF, &tmp);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x000C, 0x01);
 
-	status |= WrByte(&(p_dev->platform), 0x0101, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x0102, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x010A, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x4002, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x4002, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x010A, 0x03);
-	status |= WrByte(&(p_dev->platform), 0x0103, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x000C, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x000F, 0x43);
-	status |= WaitMs(&(p_dev->platform), 1);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0101, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0102, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x010A, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x4002, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x4002, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x010A, 0x03);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0103, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x000C, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x000F, 0x43);
+	status |= VL53L5CX_WaitMs(&(p_dev->platform), 1);
 
-	status |= WrByte(&(p_dev->platform), 0x000F, 0x40);
-	status |= WrByte(&(p_dev->platform), 0x000A, 0x01);
-	status |= WaitMs(&(p_dev->platform), 100);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x000F, 0x40);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x000A, 0x01);
+	status |= VL53L5CX_WaitMs(&(p_dev->platform), 100);
 
 	/* Wait for sensor booted (several ms required to get sensor ready ) */
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
 	status |= _vl53l5cx_poll_for_answer(p_dev, 1, 0, 0x06, 0xff, 1);
 	if(status != (uint8_t)0){
 		goto exit;
 	}
 
-	status |= WrByte(&(p_dev->platform), 0x000E, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x02);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x000E, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x02);
 
 	/* Enable FW access */
-	status |= WrByte(&(p_dev->platform), 0x03, 0x0D);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x03, 0x0D);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x01);
 	status |= _vl53l5cx_poll_for_answer(p_dev, 1, 0, 0x21, 0x10, 0x10);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
 
 	/* Enable host access to GO1 */
-	status |= RdByte(&(p_dev->platform), 0x7fff, &tmp);
-	status |= WrByte(&(p_dev->platform), 0x0C, 0x01);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 0x7fff, &tmp);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0C, 0x01);
 
 	/* Power ON status */
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x101, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x102, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x010A, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x4002, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x4002, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x010A, 0x03);
-	status |= WrByte(&(p_dev->platform), 0x103, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x400F, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x21A, 0x43);
-	status |= WrByte(&(p_dev->platform), 0x21A, 0x03);
-	status |= WrByte(&(p_dev->platform), 0x21A, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x21A, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x219, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x21B, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x101, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x102, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x010A, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x4002, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x4002, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x010A, 0x03);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x103, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x400F, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x21A, 0x43);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x21A, 0x03);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x21A, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x21A, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x219, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x21B, 0x00);
 
 	/* Wake up MCU */
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
-	status |= RdByte(&(p_dev->platform), 0x7fff, &tmp);
-	status |= WrByte(&(p_dev->platform), 0x0C, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x01);
-	status |= WrByte(&(p_dev->platform), 0x20, 0x07);
-	status |= WrByte(&(p_dev->platform), 0x20, 0x06);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 0x7fff, &tmp);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0C, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x20, 0x07);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x20, 0x06);
 
 	/* Download FW into VL53L5 */
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x09);
-	status |= WrMulti(&(p_dev->platform),0,
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x09);
+	status |= VL53L5CX_WrMulti(&(p_dev->platform),0,
 		(uint8_t*)&VL53L5CX_FIRMWARE[0],0x8000);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x0a);
-	status |= WrMulti(&(p_dev->platform),0,
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x0a);
+	status |= VL53L5CX_WrMulti(&(p_dev->platform),0,
 		(uint8_t*)&VL53L5CX_FIRMWARE[0x8000],0x8000);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x0b);
-	status |= WrMulti(&(p_dev->platform),0,
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x0b);
+	status |= VL53L5CX_WrMulti(&(p_dev->platform),0,
 		(uint8_t*)&VL53L5CX_FIRMWARE[0x10000],0x5000);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x01);
 
 	/* Check if FW correctly downloaded */
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x02);
-	status |= WrByte(&(p_dev->platform), 0x03, 0x0D);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x02);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x03, 0x0D);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x01);
 	status |= _vl53l5cx_poll_for_answer(p_dev, 1, 0, 0x21, 0x10, 0x10);
 	if(status != (uint8_t)0){
 		goto exit;
 	}
 
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
-	status |= RdByte(&(p_dev->platform), 0x7fff, &tmp);
-	status |= WrByte(&(p_dev->platform), 0x0C, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 0x7fff, &tmp);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0C, 0x01);
 
 	/* Reset MCU and wait boot */
-	status |= WrByte(&(p_dev->platform), 0x7FFF, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x114, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x115, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x116, 0x42);
-	status |= WrByte(&(p_dev->platform), 0x117, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x0B, 0x00);
-	status |= RdByte(&(p_dev->platform), 0x7fff, &tmp);
-	status |= WrByte(&(p_dev->platform), 0x0C, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x0B, 0x01);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7FFF, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x114, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x115, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x116, 0x42);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x117, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0B, 0x00);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 0x7fff, &tmp);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0C, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x0B, 0x01);
 	status |= _vl53l5cx_poll_for_mcu_boot(p_dev);
 	if(status != (uint8_t)0){
 		goto exit;
 	}
 
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x02);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x02);
 
 	/* Get offset NVM data and store them into the offset buffer */
-	status |= WrMulti(&(p_dev->platform), 0x2fd8,
+	status |= VL53L5CX_WrMulti(&(p_dev->platform), 0x2fd8,
 		(uint8_t*)VL53L5CX_GET_NVM_CMD, sizeof(VL53L5CX_GET_NVM_CMD));
 	status |= _vl53l5cx_poll_for_answer(p_dev, 4, 0,
 		VL53L5CX_UI_CMD_STATUS, 0xff, 2);
-	status |= RdMulti(&(p_dev->platform), VL53L5CX_UI_CMD_START,
+	status |= VL53L5CX_RdMulti(&(p_dev->platform), VL53L5CX_UI_CMD_START,
 		p_dev->temp_buffer, VL53L5CX_NVM_DATA_SIZE);
 	(void)memcpy(p_dev->offset_data, p_dev->temp_buffer,
 		VL53L5CX_OFFSET_BUFFER_SIZE);
@@ -376,7 +376,7 @@ uint8_t vl53l5cx_init(
 	status |= _vl53l5cx_send_xtalk_data(p_dev, VL53L5CX_RESOLUTION_4X4);
 
 	/* Send default configuration to VL53L5CX firmware */
-	status |= WrMulti(&(p_dev->platform), 0x2c34,
+	status |= VL53L5CX_WrMulti(&(p_dev->platform), 0x2c34,
 		p_dev->default_configuration,
 		sizeof(VL53L5CX_DEFAULT_CONFIGURATION));
 	status |= _vl53l5cx_poll_for_answer(p_dev, 4, 1,
@@ -411,10 +411,10 @@ uint8_t vl53l5cx_set_i2c_address(
 {
 	uint8_t status = VL53L5CX_STATUS_OK;
 
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x4, (uint8_t)(i2c_address >> 1));
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x4, (uint8_t)(i2c_address >> 1));
 	p_dev->platform.address = i2c_address;
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x02);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x02);
 
 	return status;
 }
@@ -425,8 +425,8 @@ uint8_t vl53l5cx_get_power_mode(
 {
 	uint8_t tmp, status = VL53L5CX_STATUS_OK;
 
-	status |= WrByte(&(p_dev->platform), 0x7FFF, 0x00);
-	status |= RdByte(&(p_dev->platform), 0x009, &tmp);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7FFF, 0x00);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 0x009, &tmp);
 
 	switch(tmp)
 	{
@@ -443,7 +443,7 @@ uint8_t vl53l5cx_get_power_mode(
 			break;
 	}
 
-	status |= WrByte(&(p_dev->platform), 0x7FFF, 0x02);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7FFF, 0x02);
 
 	return status;
 }
@@ -460,15 +460,15 @@ uint8_t vl53l5cx_set_power_mode(
 	switch(power_mode)
 	{
 		case VL53L5CX_POWER_MODE_WAKEUP:
-			status |= WrByte(&(p_dev->platform), 0x7FFF, 0x00);
-			status |= WrByte(&(p_dev->platform), 0x09, 0x04);
+			status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7FFF, 0x00);
+			status |= VL53L5CX_WrByte(&(p_dev->platform), 0x09, 0x04);
 			status |= _vl53l5cx_poll_for_answer(
 						p_dev, 1, 0, 0x06, 0x01, 1);
 			break;
 
 		case VL53L5CX_POWER_MODE_SLEEP:
-			status |= WrByte(&(p_dev->platform), 0x7FFF, 0x00);
-			status |= WrByte(&(p_dev->platform), 0x09, 0x02);
+			status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7FFF, 0x00);
+			status |= VL53L5CX_WrByte(&(p_dev->platform), 0x09, 0x02);
 			status |= _vl53l5cx_poll_for_answer(
 						p_dev, 1, 0, 0x06, 0x01, 0);
 			break;
@@ -477,7 +477,7 @@ uint8_t vl53l5cx_set_power_mode(
 			status = VL53L5CX_STATUS_ERROR;
 			break;
 		}
-		status |= WrByte(&(p_dev->platform), 0x7FFF, 0x02);
+		status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7FFF, 0x02);
 	}
 
 	return status;
@@ -598,12 +598,12 @@ uint8_t vl53l5cx_start_ranging(
 			(uint16_t)sizeof(output_bh_enable));
 
 	/* Start xshut bypass (interrupt mode) */
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x09, 0x05);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x02);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x09, 0x05);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x02);
 
 	/* Start ranging session */
-	status |= WrMulti(&(p_dev->platform), VL53L5CX_UI_CMD_END -
+	status |= VL53L5CX_WrMulti(&(p_dev->platform), VL53L5CX_UI_CMD_END -
 			(uint16_t)(4 - 1), (uint8_t*)cmd, sizeof(cmd));
 	status |= _vl53l5cx_poll_for_answer(p_dev, 4, 1,
 			VL53L5CX_UI_CMD_STATUS, 0xff, 0x03);
@@ -627,22 +627,22 @@ uint8_t vl53l5cx_stop_ranging(
 	uint16_t timeout = 0;
 	uint32_t auto_stop_flag = 0;
 
-	status |= RdMulti(&(p_dev->platform),
+	status |= VL53L5CX_RdMulti(&(p_dev->platform),
                           0x2FFC, (uint8_t*)&auto_stop_flag, 4);
 	if((auto_stop_flag != (uint32_t)0x4FF)
 		&& (p_dev->is_auto_stop_enabled == (uint8_t)0))
 	{
-		status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
+		status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
 
 		/* Provoke MCU stop */
-		status |= WrByte(&(p_dev->platform), 0x15, 0x16);
-		status |= WrByte(&(p_dev->platform), 0x14, 0x01);
+		status |= VL53L5CX_WrByte(&(p_dev->platform), 0x15, 0x16);
+		status |= VL53L5CX_WrByte(&(p_dev->platform), 0x14, 0x01);
 
 		/* Poll for G02 status 0 MCU stop */
 		while(((tmp & (uint8_t)0x80) >> 7) == (uint8_t)0x00)
 		{
-			status |= RdByte(&(p_dev->platform), 0x6, &tmp);
-			status |= WaitMs(&(p_dev->platform), 10);
+			status |= VL53L5CX_RdByte(&(p_dev->platform), 0x6, &tmp);
+			status |= VL53L5CX_WaitMs(&(p_dev->platform), 10);
 			timeout++;	/* Timeout reached after 5 seconds */
 
 			if(timeout > (uint16_t)500)
@@ -654,22 +654,22 @@ uint8_t vl53l5cx_stop_ranging(
 	}
 
 	/* Check GO2 status 1 if status is still OK */
-	status |= RdByte(&(p_dev->platform), 0x6, &tmp);
+	status |= VL53L5CX_RdByte(&(p_dev->platform), 0x6, &tmp);
 	if((tmp & (uint8_t)0x80) != (uint8_t)0){
-		status |= RdByte(&(p_dev->platform), 0x7, &tmp);
+		status |= VL53L5CX_RdByte(&(p_dev->platform), 0x7, &tmp);
 		if((tmp != (uint8_t)0x84) && (tmp != (uint8_t)0x85)){
 		   status |= tmp;
 		}
 	}
 
 	/* Undo MCU stop */
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x14, 0x00);
-	status |= WrByte(&(p_dev->platform), 0x15, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x14, 0x00);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x15, 0x00);
 
 	/* Stop xshut bypass */
-	status |= WrByte(&(p_dev->platform), 0x09, 0x04);
-	status |= WrByte(&(p_dev->platform), 0x7fff, 0x02);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x09, 0x04);
+	status |= VL53L5CX_WrByte(&(p_dev->platform), 0x7fff, 0x02);
 
 	return status;
 }
@@ -680,7 +680,7 @@ uint8_t vl53l5cx_check_data_ready(
 {
 	uint8_t status = VL53L5CX_STATUS_OK;
 
-	status |= RdMulti(&(p_dev->platform), 0x0, p_dev->temp_buffer, 4);
+	status |= VL53L5CX_RdMulti(&(p_dev->platform), 0x0, p_dev->temp_buffer, 4);
 
 	if((p_dev->temp_buffer[0] != p_dev->streamcount)
 			&& (p_dev->temp_buffer[0] != (uint8_t)255)
@@ -714,10 +714,10 @@ uint8_t vl53l5cx_get_ranging_data(
 	uint16_t header_id, footer_id;
 	uint32_t i, j, msize;
 
-	status |= RdMulti(&(p_dev->platform), 0x0,
+	status |= VL53L5CX_RdMulti(&(p_dev->platform), 0x0,
 			p_dev->temp_buffer, p_dev->data_read_size);
 	p_dev->streamcount = p_dev->temp_buffer[0];
-	SwapBuffer(p_dev->temp_buffer, (uint16_t)p_dev->data_read_size);
+	VL53L5CX_SwapBuffer(p_dev->temp_buffer, (uint16_t)p_dev->data_read_size);
 
 	/* Start conversion at position 16 to avoid headers */
 	for (i = (uint32_t)16; i 
@@ -1239,16 +1239,16 @@ uint8_t vl53l5cx_dci_read_data(
 		cmd[3] = (uint8_t)((data_size & (uint16_t)0xf) << 4);
 
 	/* Request data reading from FW */
-		status |= WrMulti(&(p_dev->platform),
+		status |= VL53L5CX_WrMulti(&(p_dev->platform),
 			(VL53L5CX_UI_CMD_END-(uint16_t)11),cmd, sizeof(cmd));
 		status |= _vl53l5cx_poll_for_answer(p_dev, 4, 1,
 			VL53L5CX_UI_CMD_STATUS,
 			0xff, 0x03);
 
 	/* Read new data sent (4 bytes header + data_size + 8 bytes footer) */
-		status |= RdMulti(&(p_dev->platform), VL53L5CX_UI_CMD_START,
+		status |= VL53L5CX_RdMulti(&(p_dev->platform), VL53L5CX_UI_CMD_START,
 			p_dev->temp_buffer, rd_size);
-		SwapBuffer(p_dev->temp_buffer, data_size + (uint16_t)12);
+		VL53L5CX_SwapBuffer(p_dev->temp_buffer, data_size + (uint16_t)12);
 
 	/* Copy data from FW into input structure (-4 bytes to remove header) */
 		for(i = 0 ; i < (int16_t)data_size;i++){
@@ -1290,7 +1290,7 @@ uint8_t vl53l5cx_dci_write_data(
 		headers[3] = (uint8_t)((data_size & (uint16_t)0xf) << 4);
 
 	/* Copy data from structure to FW format (+4 bytes to add header) */
-		SwapBuffer(data, data_size);
+		VL53L5CX_SwapBuffer(data, data_size);
 		for(i = (int16_t)data_size - (int16_t)1 ; i >= 0; i--)
 		{
 			p_dev->temp_buffer[i + 4] = data[i];
@@ -1302,13 +1302,13 @@ uint8_t vl53l5cx_dci_write_data(
 			footer, sizeof(footer));
 
 	/* Send data to FW */
-		status |= WrMulti(&(p_dev->platform),address,
+		status |= VL53L5CX_WrMulti(&(p_dev->platform),address,
 			p_dev->temp_buffer,
 			(uint32_t)((uint32_t)data_size + (uint32_t)12));
 		status |= _vl53l5cx_poll_for_answer(p_dev, 4, 1,
 			VL53L5CX_UI_CMD_STATUS, 0xff, 0x03);
 
-		SwapBuffer(data, data_size);
+		VL53L5CX_SwapBuffer(data, data_size);
 	}
 
 	return status;

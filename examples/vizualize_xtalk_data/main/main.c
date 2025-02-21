@@ -182,7 +182,7 @@ void app_main(void)
     uint16_t xtalk_shape_bins[144];
 
     /* Swap buffer */
-    SwapBuffer(xtalk_data, VL53L5CX_XTALK_BUFFER_SIZE);
+    VL53L5CX_SwapBuffer(xtalk_data, VL53L5CX_XTALK_BUFFER_SIZE);
 
     /* Get data */
     for(i = 0; i < VL53L5CX_XTALK_BUFFER_SIZE; i = i + 4)
@@ -245,7 +245,7 @@ void app_main(void)
 
         /* Wait a few ms to avoid too high polling (function in platform
          * file, not in API) */
-        WaitMs(&(Dev.platform), 5);
+        VL53L5CX_WaitMs(&(Dev.platform), 5);
     }
 
     status = vl53l5cx_stop_ranging(&Dev);

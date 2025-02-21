@@ -210,7 +210,7 @@ void app_main(void)
 
         /* Wait a few ms to avoid too high polling (function in platform
          * file, not in API) */
-        WaitMs(&(Dev.platform), 5);
+        VL53L5CX_WaitMs(&(Dev.platform), 5);
     }
 
     status = vl53l5cx_stop_ranging(&Dev);

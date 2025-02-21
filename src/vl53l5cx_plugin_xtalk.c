@@ -26,9 +26,9 @@ static uint8_t _vl53l5cx_poll_for_answer(
 	uint8_t timeout = 0;
 
 	do {
-		status |= RdMulti(&(p_dev->platform), 
+		status |= VL53L5CX_RdMulti(&(p_dev->platform), 
                                   address, p_dev->temp_buffer, 4);
-		status |= WaitMs(&(p_dev->platform), 10);
+		status |= VL53L5CX_WaitMs(&(p_dev->platform), 10);
 		
                 /* 2s timeout or FW error*/
 		if((timeout >= (uint8_t)200) 
@@ -160,6 +160,7 @@ uint8_t vl53l5cx_calibrate_xtalk(
 	uint16_t reflectance = reflectance_percent;
 	uint8_t	samples = nb_samples;
 	uint16_t distance = distance_mm;
+	uint8_t *default_xtalk_ptr;
 
 	/* Get initial configuration */
 	status |= vl53l5cx_get_resolution(p_dev, &resolution);
@@ -185,7 +186,7 @@ uint8_t vl53l5cx_calibrate_xtalk(
 		/* Send Xtalk calibration buffer */
                 (void)memcpy(p_dev->temp_buffer, VL53L5CX_CALIBRATE_XTALK, 
                        sizeof(VL53L5CX_CALIBRATE_XTALK));
-		status |= WrMulti(&(p_dev->platform), 0x2c28,
+		status |= VL53L5CX_WrMulti(&(p_dev->platform), 0x2c28,
 				p_dev->temp_buffer, 
                        (uint16_t)sizeof(VL53L5CX_CALIBRATE_XTALK));
 		status |= _vl53l5cx_poll_for_answer(p_dev, 
@@ -212,7 +213,7 @@ uint8_t vl53l5cx_calibrate_xtalk(
 		status |= _vl53l5cx_program_output_config(p_dev);
 
 		/* Start ranging session */
-		status |= WrMulti(&(p_dev->platform),
+		status |= VL53L5CX_WrMulti(&(p_dev->platform),
 				VL53L5CX_UI_CMD_END - (uint16_t)(4 - 1),
 				(uint8_t*)cmd, sizeof(cmd));
 		status |= _vl53l5cx_poll_for_answer(p_dev, 
@@ -220,7 +221,7 @@ uint8_t vl53l5cx_calibrate_xtalk(
 
 		/* Wait for end of calibration */
 		do {
-			status |= RdMulti(&(p_dev->platform), 
+			status |= VL53L5CX_RdMulti(&(p_dev->platform), 
                                           0x0, p_dev->temp_buffer, 4);
 
 			if(p_dev->temp_buffer[0] != VL53L5CX_STATUS_ERROR)
@@ -230,9 +231,10 @@ uint8_t vl53l5cx_calibrate_xtalk(
 				(((uint16_t)(p_dev->temp_buffer[3] & 
                                  (uint16_t)0x80) >> 7) == (uint16_t)1))
 				{
+					default_xtalk_ptr = p_dev->default_xtalk;
 					(void)memcpy(p_dev->xtalk_data, 
-                                               p_dev->default_xtalk,
-                                               VL53L5CX_XTALK_BUFFER_SIZE);
+						default_xtalk_ptr,
+						sizeof(p_dev->xtalk_data));
 					status |= VL53L5CX_STATUS_XTALK_FAILED;
 				}
 				continue_loop = (uint8_t)0;
@@ -245,7 +247,7 @@ uint8_t vl53l5cx_calibrate_xtalk(
 			else
 			{
 				timeout++;
-				status |= WaitMs(&(p_dev->platform), 50);
+				status |= VL53L5CX_WaitMs(&(p_dev->platform), 50);
 			}
 
 		}while (continue_loop == (uint8_t)1);
@@ -254,11 +256,11 @@ uint8_t vl53l5cx_calibrate_xtalk(
 	/* Save Xtalk data into the Xtalk buffer */
         (void)memcpy(p_dev->temp_buffer, VL53L5CX_GET_XTALK_CMD, 
                sizeof(VL53L5CX_GET_XTALK_CMD));
-	status |= WrMulti(&(p_dev->platform), 0x2fb8,
+	status |= VL53L5CX_WrMulti(&(p_dev->platform), 0x2fb8,
 			p_dev->temp_buffer, 
                         (uint16_t)sizeof(VL53L5CX_GET_XTALK_CMD));
 	status |= _vl53l5cx_poll_for_answer(p_dev,VL53L5CX_UI_CMD_STATUS, 0x03);
-	status |= RdMulti(&(p_dev->platform), VL53L5CX_UI_CMD_START,
+	status |= VL53L5CX_RdMulti(&(p_dev->platform), VL53L5CX_UI_CMD_START,
 			p_dev->temp_buffer, 
                         VL53L5CX_XTALK_BUFFER_SIZE + (uint16_t)4);
 
@@ -268,7 +270,7 @@ uint8_t vl53l5cx_calibrate_xtalk(
                        - (uint16_t)8]), footer, sizeof(footer));
 
 	/* Reset default buffer */
-	status |= WrMulti(&(p_dev->platform), 0x2c34,
+	status |= VL53L5CX_WrMulti(&(p_dev->platform), 0x2c34,
 			p_dev->default_configuration,
 			VL53L5CX_CONFIGURATION_SIZE);
 	status |= _vl53l5cx_poll_for_answer(p_dev,VL53L5CX_UI_CMD_STATUS, 0x03);
@@ -297,10 +299,10 @@ uint8_t vl53l5cx_get_caldata_xtalk(
 
         (void)memcpy(p_dev->temp_buffer, VL53L5CX_GET_XTALK_CMD, 
                sizeof(VL53L5CX_GET_XTALK_CMD));
-	status |= WrMulti(&(p_dev->platform), 0x2fb8,
+	status |= VL53L5CX_WrMulti(&(p_dev->platform), 0x2fb8,
 			p_dev->temp_buffer,  sizeof(VL53L5CX_GET_XTALK_CMD));
 	status |= _vl53l5cx_poll_for_answer(p_dev,VL53L5CX_UI_CMD_STATUS, 0x03);
-	status |= RdMulti(&(p_dev->platform), VL53L5CX_UI_CMD_START,
+	status |= VL53L5CX_RdMulti(&(p_dev->platform), VL53L5CX_UI_CMD_START,
 			p_dev->temp_buffer, 
                         VL53L5CX_XTALK_BUFFER_SIZE + (uint16_t)4);
 

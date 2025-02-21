@@ -25,7 +25,7 @@
  * @brief Current driver version.
  */
 
-#define VL53L5CX_API_REVISION			"VL53L5CX_1.3.11"
+#define VL53L5CX_API_REVISION			"VL53L5CX_2.0.0"
 
 /**
  * @brief Default I2C address of VL53L5CX sensor. Can be changed using function

@@ -13,7 +13,7 @@
 
 #include "platform.h"
 
-uint8_t RdByte(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t *p_value) {
+uint8_t VL53L5CX_RdByte(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t *p_value) {
     esp_err_t ret;
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
@@ -33,7 +33,7 @@ uint8_t RdByte(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t 
     return ret;
 }
 
-uint8_t WrByte(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t value) {
+uint8_t VL53L5CX_WrByte(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t value) {
     esp_err_t ret;
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
@@ -52,7 +52,7 @@ uint8_t WrByte(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t 
     return ret;
 }
 
-uint8_t WrMulti(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t *p_values, uint32_t size) {
+uint8_t VL53L5CX_WrMulti(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t *p_values, uint32_t size) {
     esp_err_t ret;
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
@@ -70,7 +70,7 @@ uint8_t WrMulti(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t
     return ret;
 }
 
-uint8_t RdMulti(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t *p_values, uint32_t size) {
+uint8_t VL53L5CX_RdMulti(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t *p_values, uint32_t size) {
     esp_err_t ret;
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
@@ -93,7 +93,7 @@ uint8_t RdMulti(VL53L5CX_Platform *p_platform, uint16_t RegisterAddress, uint8_t
     return ret;
 }
 
-uint8_t Reset_Sensor(VL53L5CX_Platform *p_platform) {
+uint8_t VL53L5CX_Reset_Sensor(VL53L5CX_Platform *p_platform) {
     uint8_t status = 0;
 
     /* (Optional) Need to be implemented by customer. This function returns 0 if OK */
@@ -102,18 +102,18 @@ uint8_t Reset_Sensor(VL53L5CX_Platform *p_platform) {
     /* Set pin AVDD to LOW */
     /* Set pin VDDIO  to LOW */
     /* Set pin CORE_1V8 to LOW */
-    WaitMs(p_platform, 100);
+    VL53L5CX_WaitMs(p_platform, 100);
 
     /* Set pin LPN to HIGH */
     /* Set pin AVDD to HIGH */
     /* Set pin VDDIO to HIGH */
     /* Set pin CORE_1V8 to HIGH */
-    WaitMs(p_platform, 100);
+    VL53L5CX_WaitMs(p_platform, 100);
 
     return status;
 }
 
-void SwapBuffer(uint8_t *buffer, uint16_t size) {
+void VL53L5CX_SwapBuffer(uint8_t *buffer, uint16_t size) {
     uint32_t i;
     uint8_t tmp[4] = {0};
 
@@ -128,7 +128,7 @@ void SwapBuffer(uint8_t *buffer, uint16_t size) {
     }
 }
 
-uint8_t WaitMs(VL53L5CX_Platform *p_platform, uint32_t TimeMs) {
+uint8_t VL53L5CX_WaitMs(VL53L5CX_Platform *p_platform, uint32_t TimeMs) {
     vTaskDelay(TimeMs / portTICK_PERIOD_MS);
 
     return ESP_OK;
