@@ -10,6 +10,10 @@
   ******************************************************************************
   */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef VL53L5CX_API_H_
 #define VL53L5CX_API_H_
 
@@ -741,3 +745,7 @@ uint8_t vl53l5cx_dci_replace_data(
 		uint16_t			new_data_pos);
 
 #endif //VL53L5CX_API_H_
+
+#ifdef __cplusplus
+}
+#endif

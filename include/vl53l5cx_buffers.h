@@ -11,6 +11,9 @@
   ******************************************************************************
   */
 
+#ifdef __cplusplus
+extern "C" {
+#endifv
 
 #ifndef VL53L5CX_BUFFERS_H_
 #define VL53L5CX_BUFFERS_H_
@@ -22009,4 +22012,7 @@ const uint8_t VL53L5CX_GET_NVM_CMD[] = {
 };
 
 #endif /* VL53L5CX_BUFFERS_H_ */
-	
+
+#ifdef __cplusplus
+}
+#endif
