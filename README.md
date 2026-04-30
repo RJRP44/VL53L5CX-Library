@@ -27,7 +27,7 @@ on [ST's  Ultra Lite Driver (ULD) for VL53L5CX](https://www.st.com/content/st_co
 
 ### Requirements
 
-This version of the library uses the latest version of the esp-idf ([v5.4](https://github.com/espressif/esp-idf/releases/tag/v5.4)) for performance improvements.
+This version of the library uses esp-idf v6 for performance improvements.
 
 ### Wiring for the VL53L5CX-SATEL 🔌
 
@@ -54,7 +54,7 @@ So, you can use the [IDF Component Manager](https://docs.espressif.com/projects/
 To add this component to your project, run:
 
 ```log
-idf.py add-dependency "rjrp44/vl53l5cx^2.0.4" 
+idf.py add-dependency "rjrp44/vl53l5cx" 
 ```
 
 
